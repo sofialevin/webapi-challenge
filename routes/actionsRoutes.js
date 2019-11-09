@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const Actions = require('../data/helpers/actionModel');
+const Projects = require('../data/helpers/projectModel');
 
 router.get('/', (req, res) => {
     Actions.get()
@@ -53,17 +54,10 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/', (req, res) => {
+router.post('/', validateProjectId, (req, res) => {
     const action = req.body;
 
-    if (!action.project_id) {
-        res.status(400).json(
-            {
-                success: false,
-                errorMessage: "Please provide a project_id for the action."
-            }
-        )
-    } else if (!action.description || !action.notes) {
+    if (!action.description || !action.notes) {
         res.status(400).json(
             {
                 success: false,
@@ -147,5 +141,40 @@ router.put('/:id', async (req, res) => {
         )
     }
 })
+
+function validateProjectId(req, res, next) {
+    const id = req.body.project_id;
+
+    if (!id) {
+        res.status(400).json(
+            {
+                message: "Please provide a project_id for the action."
+            }
+        )
+    } else {
+        Projects.get(id)
+        .then(project => {
+            if (project) {
+                req.project = project
+                next();
+            } else {
+                res.status(400).json(
+                    {
+                        message: "The project with the specified ID does not exist."
+                    }
+                )
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json(
+                {
+                    message: 'exception', err
+                }
+            )
+        })
+    }
+        
+};
 
 module.exports = router;
