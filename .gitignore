@@ -1,3 +1,7 @@
+# Linter
+
+.eslintrc.js
+
 # Logs
 logs
 *.log
