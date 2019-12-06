@@ -2,38 +2,39 @@ const db = require('../dbConfig.js');
 const mappers = require('./mappers');
 
 module.exports = {
-  get: function(id) {
-    let query = db('actions');
+  // eslint-disable-next-line func-names
+  async get(id) {
+    const query = db('actions');
 
     if (id) {
-      return query
-        .where('id', id)
-        .first()
-        .then(action => {
-          if (action) {
-            return mappers.actionToBody(action);
-          } else {
-            return action;
-          }
-        });
+      const action = await query.where('id', id)
+        .first();
+      if (action) {
+        return mappers.actionToBody(action);
+      }
+      return action;
     }
 
-    return query.then(actions => {
-      return actions.map(action => mappers.actionToBody(action));
-    });
+    const actions = await query;
+    // eslint-disable-next-line camelcase
+    return actions.map((action_1) => mappers.actionToBody(action_1));
   },
-  insert: function(action) {
-    return db('actions')
-      .insert(action)
-      .then(([id]) => this.get(id));
+  async insert(action) {
+    const [id] = await db('actions')
+      .insert(action);
+    // eslint-disable-next-line no-return-await
+    return await this.get(id);
   },
-  update: function(id, changes) {
-    return db('actions')
+  // eslint-disable-next-line func-names
+  async update(id, changes) {
+    const count = await db('actions')
       .where('id', id)
-      .update(changes)
-      .then(count => (count > 0 ? this.get(id) : null));
+      .update(changes);
+    // eslint-disable-next-line no-return-await
+    return await (count > 0 ? this.get(id) : null);
   },
-  remove: function(id) {
+  // eslint-disable-next-line func-names
+  remove(id) {
     return db('actions')
       .where('id', id)
       .del();
