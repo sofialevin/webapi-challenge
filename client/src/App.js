@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import axios from 'axios';
+import { Card } from 'semantic-ui-react';
+import ProjectCard from './components/ProjectCard.js'
+
 
 function App() {
   const [projects, setProjects] = useState([]);
@@ -18,11 +21,12 @@ function App() {
 
   return (
     <div className="App">
-      <ul>
+      <h1>Web API Challenge</h1>
+      <Card.Group>
       {
-        projects.map((project) => <li>{project.name}</li>)
+        projects.map((project) => <ProjectCard project={project}/>)
       }
-      </ul>
+      </Card.Group>
     </div>
   );
 }

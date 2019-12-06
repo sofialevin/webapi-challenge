@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+#root > .App > h1 {
+  margin: 20px;
+}
+
+.App > .ui.cards {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
